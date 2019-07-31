@@ -4,7 +4,7 @@ This Repo is contributed for a quad-forest which can count the number of data po
 
 The quad-forest can be tested and built under the following evironment:
 * JDK 1.8 or higher
-* Junit4
+* JUnit4
 
 ## Parameters:
 Variable | in Program | Note | Suggest Value
