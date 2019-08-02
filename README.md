@@ -1,4 +1,4 @@
-# QuadForest: Counting the Number of Points in the Range of Euclidian Sphere from High Dimension and Massive Data
+# QuadForest: Counting the Number of Points in the Range of Euclidian Sphere from High Dimensional and Massive Data
 
 This Repo is contributed for a quad-forest which can count the number of data points in the range of euclidian sphere with high precision and good time performance. It would accept massive data sets and performs well with 10^4 times acceleration comparing to the naive counting method. With constant time cost on inserting data, deleting data and generating query, the quad forest can be applied into dynamic algorithms for data stream. 
 
@@ -21,4 +21,5 @@ Eps| Dim| Rho|Error Rate|Data Range|Data Size|Insert Time|Single Point Query
 0.1|4|0.01|No Error|$[-10, 10]$|$10^6$|6.8s($10^6$)|0.38ms/Point(QT), 480ms/Point(Naive)
 0.1|4|0.01|No Error|$[-10, 10]$|$10^7$|24.7s($10^7$)|0.21ms/Point(QT), 1744ms/Point(Naive)
 0.2|4|0.1|No Error|$[-10, 10]$|$10^7$|19.3s($10^7$)|2.9ms/Point(QT), 1707ms/Point(Naive)
+
 Testing Evironment: Intel i5-6200U @2.3GHz, Windows10 Pro
