@@ -29,9 +29,9 @@ From the problem description, we could know that when it comes to the groups wit
 The cells/groups we query would be O((eps/(eps/sqrt(dim)))^dim)=O((sqrt(dim))^dim). According to the height of one quadTree: O(log(1/rho)), the complexity would smaller than O(log(1/rho)\*(sqrt(dim))^dim).
 
 ## Evaluation:
-Insertion: O(log(1/rho))=O(1): inserted by group can be much faster
-Deletion: O(log(1/rho))=O(1)
-Query: < O(log(1/rho)\*((sqrt(dim))^dim))\~O(1)
+* Insertion: O(log(1/rho))=O(1): inserted by group can be much faster
+* Deletion: O(log(1/rho))=O(1)
+* Query: < O(log(1/rho)\*((sqrt(dim))^dim))\~O(1)
 
 ## Parameters:
 Variable | in Program | Note | Suggest Value
