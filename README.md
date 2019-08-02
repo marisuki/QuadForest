@@ -49,4 +49,4 @@ Eps| Dim| Rho|Error Rate|Data Range|Data Size|Insert Time|Single Point Query
 0.1|4|0.01|No Error|$[-10, 10]$|$10^7$|24.7s($10^7$)|0.21ms/Point(QT), 1744ms/Point(Naive)
 0.2|4|0.1|No Error|$[-10, 10]$|$10^7$|19.3s($10^7$)|2.9ms/Point(QT), 1707ms/Point(Naive)
 
-Testing Evironment: Intel i5-6200U @2.3GHz, Windows10 Pro
+Testing Evironment: Intel i5-6200U @2.3GHz, Windows10 Pro, Single node
