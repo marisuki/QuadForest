@@ -30,7 +30,7 @@ public class UnitTest {
         double rho = 0.01;
         int dim = 1;
         QuadForest qf = new QuadForest(eps, rho, dim, precision);
-        qf.insert(data);
+        qf.insert(data, false, null);
         Vector<Integer> query = new Vector<>();
         query.add(0);
         int x = qf.query(query);
@@ -54,16 +54,17 @@ public class UnitTest {
         double rho = 0.01;
         double error = 0.01;
         QuadForest qf = new QuadForest(eps, rho, dim, precise);
-        int tot = (int)1e7;
-        List<Vector<Integer>> data = randomGeneration(dim, tot, -10, 10);
+        int tot = (int)5e3;
+        List<Vector<Integer>> data = randomGeneration(dim, tot, -4, 4);
         List<Vector<Integer>> query = data.subList(data.size()-100, data.size()-1);
         data = data.subList(0, data.size()-101);
         long st = System.currentTimeMillis();
-        qf.insert(data);
+        qf.insert(data, false, null);
         long ed = System.currentTimeMillis();
         System.out.println("Insert Time: " + (ed-st) + " ms.");
         long time_stat = 0;
         long naive = 0;
+        qf.query(query.get(0));
         for(Vector<Integer> q: query){
             long stt = System.currentTimeMillis();
             int ans = qf.query(q);

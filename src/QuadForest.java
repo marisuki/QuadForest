@@ -3,6 +3,9 @@ import java.util.*;
 
 public class QuadForest implements Serializable {
     private Map<Vector<Integer>, QuadTree> forest;
+    private Map<Vector<Integer>, Integer> vinCnt; // p->vincnt
+    private Map<Vector<Integer>, Set<Vector<Integer>>> globalDic;
+    private Set<Vector<Integer>> modified;
     private double eps;
     private double rho;
     private int dim;
@@ -10,12 +13,19 @@ public class QuadForest implements Serializable {
     public QuadForest(double eps, double rho, int dim, int precise){
         this.eps = eps; this.rho = rho; this.dim = dim; this.precise = precise;
         forest = new HashMap<>();
+        vinCnt = new HashMap<>();
+        modified = new HashSet<>();
+        globalDic = new HashMap<>();
     }
-    public void insert(List<Vector<Integer>> points){
+    public void insert(List<Vector<Integer>> points, boolean sameGroup, Vector<Integer> group){
         Map<Vector<Integer>, List<Vector<Integer>>> append = new HashMap<>();
+        Vector<Integer> base = new Vector<>();
+        if(sameGroup) { base = group; }
         for(Vector<Integer> p: points){
-            Vector<Integer> base = new Vector<>();
-            for (Integer integer: p) base.add((int) ((integer * 1.0) / (precise*1.0 * (eps / Math.sqrt(dim)))));
+            if(! sameGroup){
+                base = new Vector<>();
+                for (Integer integer: p) base.add((int) ((integer * 1.0) / (precise*1.0 * (eps / Math.sqrt(dim)))));
+            }
             //System.out.println("insert");
             //for(Integer c: base) System.out.print(c); System.out.print(" ");
             //System.out.println();
@@ -35,35 +45,56 @@ public class QuadForest implements Serializable {
                 append.put(base, tmp);
             }
         }
-        for(Vector<Integer> base: append.keySet()){
-            forest.get(base).insert(append.get(base));
+        for(Vector<Integer> basep: append.keySet()){
+            forest.get(basep).insert(append.get(basep));
+            modified.add(basep);
+            if(globalDic.containsKey(basep)) globalDic.get(basep).addAll(append.get(basep));
+            else globalDic.put(basep, new HashSet<>(append.get(basep)));
         }
+        //updateVinCntStatus();
     }
-    public void delete(List<Vector<Integer>> points){
+    public void delete(List<Vector<Integer>> points, boolean sameGroup, Vector<Integer> group){
         Map<Vector<Integer>, List<Vector<Integer>>> append = new HashMap<>();
+        Vector<Integer> base = new Vector<>();
+        if(sameGroup) base = group;
         for(Vector<Integer> p: points){
-            Vector<Integer> base = new Vector<>();
-            for (Integer integer: p) base.add((int) ((integer * 1.0) / (precise * (eps / Math.sqrt(dim)))));
+            if(! sameGroup){
+                base = new Vector<>();
+                for (Integer integer: p) base.add((int) ((integer * 1.0) / (precise*1.0 * (eps / Math.sqrt(dim)))));
+            }
+            //System.out.println("insert");
             //for(Integer c: base) System.out.print(c); System.out.print(" ");
             //System.out.println();
-            if(forest.containsKey(base)){
+            if(globalDic.get(base).contains(p)){
                 if(append.containsKey(base)) append.get(base).add(p);
                 else{
                     List<Vector<Integer>> tmp = new ArrayList<>();
                     tmp.add(p);
                     append.put(base, tmp);
                 }
+                globalDic.get(base).remove(p);
             }
             else {
                 System.out.println("[E] Delete with non-exist QuadTree->Node->Point.");
                 System.out.println("[I] Continue deletion, skip error. [POS: QuadForest:delete].");
             }
         }
-        for(Vector<Integer> base: append.keySet()){
-            forest.get(base).delete(append.get(base));
+        for(Vector<Integer> basep: append.keySet()){
+            forest.get(basep).delete(append.get(basep));
+            modified.add(basep);
         }
     }
     public int query(Vector<Integer> p){
+        //return queryNaive(p);
+
+        if(!modified.isEmpty()){
+            updateVinCntStatus();
+        }
+        if(vinCnt.containsKey(p)) return vinCnt.get(p);
+        else return queryNaive(p);
+
+    }
+    public int queryNaive(Vector<Integer> p){
         int ans = 0;
         Vector<Integer> cell = new Vector<>();
         for(Integer x: p) cell.add((int) (x*1.0/(precise*1.0*(eps/Math.sqrt(dim)))));
@@ -86,6 +117,29 @@ public class QuadForest implements Serializable {
         }
 
         return ans;
+    }
+    public int queryCellTot(Vector<Integer> cell){
+        if(forest.containsKey(cell)) return forest.get(cell).queryRoot();
+        else return 0;
+    }
+    private void updateVinCntStatus(){
+        long st = System.currentTimeMillis();
+        int cnt = 0;
+        for(Vector<Integer> t: this.modified) {
+            List<Vector<Integer>> rc = generatePossibleCells(t);
+            cnt++;
+            if(cnt%100==0) System.out.println("Step: "+cnt+"/"+this.modified.size());
+            for(Vector<Integer> r: rc){
+                if(!globalDic.containsKey(r)) continue;
+                for(Vector<Integer> p: globalDic.get(r)) {
+                    vinCnt.put(p, queryNaive(p));
+                }
+            }
+        }
+        modified.clear();
+        long ed = System.currentTimeMillis();
+        System.out.println("Status Update Cost: "+(ed-st)+" ms.");
+        //System.gc();
     }
     private List<Vector<Integer>> generatePossibleCells(Vector<Integer> cell){
         int rad = (int) (Math.sqrt(dim)+0.5);

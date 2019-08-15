@@ -1,10 +1,10 @@
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
 
 class Node implements Serializable {
-    private Integer value;
+    Integer value;
     private Map<Integer, Node> child;
     private Vector<Integer> center;
     //private Node par;
@@ -93,7 +93,7 @@ class Node implements Serializable {
         }
         return 0;
     }
-    private double eculdian(@NotNull Vector<Double> from, Vector<Double> to){
+    private double eculdian(Vector<Double> from, Vector<Double> to){
         double ans = 0;
         for(int i=0;i<from.size();i++) ans += (from.get(i)-to.get(i))*(from.get(i)-to.get(i));
         return Math.sqrt(ans);

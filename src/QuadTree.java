@@ -27,6 +27,7 @@ public class QuadTree implements Serializable {
         //System.out.println(p.get(0));
         return root.intersect(p, eps);
     }
+    public int queryRoot(){ return root.value;}
     public String asString(){
         return root.asString();
     }
